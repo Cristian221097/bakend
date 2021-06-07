@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using miPropiedad.data;
+using miPropiedad.interfaces;
 using miPropiedad.Model;
 using miPropiedad.resquest;
 using System;
@@ -14,17 +15,18 @@ namespace miPropiedad.Controllers
     [ApiController]
     public class PropietarioController : ControllerBase
     {
+        private readonly IPropietarioRepositorio _IPropietario;
+        public PropietarioController(IPropietarioRepositorio IPropietario)
+        {
+            _IPropietario = IPropietario;    
+        }
+
         [HttpPost]
         public IActionResult Post(Propietario propietario)
         {
             Repuesta repuesta = new Repuesta();
 
-            using (miPropiedadContext db = new miPropiedadContext())
-            {
-                db.Propietario.Add(propietario);
-                db.SaveChanges();
-
-            }
+            _IPropietario.InsertarPropietario(propietario);
 
             repuesta.Exito = 1;
             repuesta.Data = propietario;

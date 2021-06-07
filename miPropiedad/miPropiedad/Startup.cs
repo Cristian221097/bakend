@@ -2,10 +2,14 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using miPropiedad.data;
+using miPropiedad.interfaces;
+using miPropiedad.Repositorio;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,6 +19,7 @@ namespace miPropiedad
 {
     public class Startup
     {
+        readonly string Micros = "Micors";
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
@@ -25,7 +30,33 @@ namespace miPropiedad
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+
+            services.AddCors(options => {
+                options.AddPolicy(name: Micros,
+                                   builder =>
+                                   {
+                                       builder.WithHeaders("*");
+                                       builder.WithOrigins("*");
+                                       builder.WithMethods("*");
+                                   });
+            });
+
+
             services.AddControllers();
+
+            services.AddDbContext<miPropiedadContext>(options =>
+                options.UseSqlServer(Configuration.GetConnectionString("miPropiedad"))
+               
+            );
+
+            
+            services.AddScoped<IPropiedadRepositorio, PropiedadRepositorio>();
+            services.AddScoped<IPropietarioRepositorio, PropietarioRepositorio>();
+
+
+
+
+
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
