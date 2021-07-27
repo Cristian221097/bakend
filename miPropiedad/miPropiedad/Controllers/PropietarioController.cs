@@ -34,6 +34,6 @@ namespace miPropiedad.Controllers
             return Ok(repuesta);
         }
 
-
+        
     }
 }

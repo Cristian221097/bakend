@@ -20,6 +20,7 @@ namespace miPropiedad.data
         {
         }
 
+        public virtual DbSet<Foto> Foto { get; set; }
         public virtual DbSet<Propiedad> Propiedad { get; set; }
         public virtual DbSet<Propietario> Propietario { get; set; }
         public virtual DbSet<Publicacion> Publicacion { get; set; }
@@ -30,23 +31,42 @@ namespace miPropiedad.data
             if (!optionsBuilder.IsConfigured)
             {
 #warning To protect potentially sensitive information in your connection string, you should move it out of source code. See http://go.microsoft.com/fwlink/?LinkId=723263 for guidance on storing connection strings.
-                optionsBuilder.UseSqlServer("server=DESKTOP-0CA3EBA;Database=miPropiedad;Trusted_connection=true;");
+                optionsBuilder.UseSqlServer("Server=DESKTOP-0CA3EBA;Database=miPropiedad ;Integrated Security = true");
             }
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            modelBuilder.Entity<Foto>(entity =>
+            {
+                entity.Property(e => e.Id).HasColumnName("id");
+
+                entity.Property(e => e.IdPropiedad).HasColumnName("idPropiedad");
+
+                entity.Property(e => e.Imagen)
+                    .IsRequired()
+                    .HasColumnName("imagen")
+                    .HasMaxLength(100)
+                    .IsUnicode(false);
+
+                entity.HasOne(d => d.IdPropiedadNavigation)
+                    .WithMany(p => p.Foto)
+                    .HasForeignKey(d => d.IdPropiedad)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_Foto_Propiedad");
+            });
+
             modelBuilder.Entity<Propiedad>(entity =>
             {
                 entity.HasKey(e => e.IdPropiedad);
 
                 entity.Property(e => e.IdPropiedad).HasColumnName("idPropiedad");
 
-                entity.Property(e => e.Baños).HasColumnName("baños");
+                entity.Property(e => e.Banos).HasColumnName("baños");
 
                 entity.Property(e => e.Caracteristica)
                     .HasColumnName("caracteristica")
-                    .HasMaxLength(400)
+                    .HasMaxLength(600)
                     .IsUnicode(false);
 
                 entity.Property(e => e.Categoria)
@@ -66,7 +86,8 @@ namespace miPropiedad.data
 
                 entity.Property(e => e.Fotos)
                     .HasColumnName("fotos")
-                    .HasColumnType("image");
+                    .HasMaxLength(500)
+                    .IsUnicode(false);
 
                 entity.Property(e => e.Habitaciones).HasColumnName("habitaciones");
 

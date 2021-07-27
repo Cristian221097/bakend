@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace miPropiedad.Repositorio
 {
-    public class PropietarioRepositorio : IPropietarioRepositorio
+    public class PropietarioRepositorio  : IPropietarioRepositorio
     {
         private readonly miPropiedadContext _db;
         public PropietarioRepositorio(miPropiedadContext db)
